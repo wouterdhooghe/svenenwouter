@@ -102,8 +102,14 @@ var out = document.querySelector(".output");
 
 var customFunctions = {
     // deze werkt nu nog niet met een willekeurig aantal elementen!!!
-  plus: function (a, b) {
-    return a + b;
+  plus: function () {
+//     arguments is een object met alle argumenten die zijn meegegeven met deze functie erin
+
+// de argumenten van de plus functie zijn een object, maar moeten eerst naar een array worden omgezet
+var argumentarray = Object.values(arguments);
+// Tel steeds de eerste op met de som van de rest van de array (reduce) en bekom zo de totale som
+sum = argumentarray.reduce(function (a,b) {return a + b;});
+return sum;
   },
   minus: function (a, b) {
     return a - b;
@@ -344,6 +350,7 @@ return eq
 
 
 var equation = math.parse('');
+var keyslist = [];
 
 selected = function (node) {
       
@@ -354,6 +361,13 @@ var filtered = node.filter(function (node) {
 return filtered;
 
 }
+
+UpdateEval = function (node) {
+    
+    antwoord = equation.compile().eval();
+    antwoord ? result.innerHTML = antwoord.toString() : result.value = '' ;
+    
+};
 
 updatelatex = function (node) {
     try {
@@ -371,6 +385,7 @@ updatelatex = function (node) {
       katex.render(largelatex, pretty);
     }
     catch (err) {pretty.innerHTML = "error!!!"}
+    UpdateEval(node);
 }
 
 updatelatex(equation);
@@ -578,6 +593,9 @@ MoveSelectToAdress(selectadress,downadress,eq);
 
  updatelatex(equation);
 }
+
+
+// wat er gebeurt als je iets rechtstreek invult in de expressiebox
 expr.oninput = function () {
     
     equation = math.parse(expr.value)
@@ -595,6 +613,10 @@ if (e.shiftKey == 1)
         case 38: out.innerHTML = 'up'; break;
         case 39: out.innerHTML = 'right'; break;
         case 40: out.innerHTML = 'down'; break;
+
+// Speciale cijfers
+        case 53: equation = math.parse(expr.value); updatelatex(equation); break;
+        case 54: updatelatex(equation); break;
     }
 
 else if (e.ctrlKey == 1)
@@ -628,23 +650,21 @@ else if (e.altKey == 1)
 else
 
     switch (e.keyCode) {
-        case 37: out.innerHTML = 'left'; leftselect(equation); break;
+        case 37: out.innerHTML = 'left'; e.preventDefault(); leftselect(equation); break;
         case 38: out.innerHTML = 'up'; e.preventDefault(); upselect(equation); break;
-        case 39: out.innerHTML = 'right'; rightselect(equation); break;
+        case 39: out.innerHTML = 'right'; e.preventDefault(); rightselect(equation); break;
         case 40: out.innerHTML = 'down'; e.preventDefault(); downselect(equation); break;
-        
-        case 173: pluskey(); break;
-        case 164: timeskey(); break;
-        case 192: powerkey(); break;
-        case 169: minuskey(); break;
-        case 160: dividekey(); break;
-        case 165: nthrootkey(); break;
-        case 61: equalskey(); break;
 
-        case 53: equation = math.parse(expr.value); updatelatex(equation);
-        case 54: updatelatex(equation);
+// Specialkeys voor Wouter        
+        case 173: pluskey(); keyslist.push(173); break;
+        case 164: timeskey(); keyslist.push(164); break;
+        case 192: powerkey(); keyslist.push(192); break;
+        case 169: minuskey(); keyslist.push(169); break;
+        case 160: dividekey(); keyslist.push(160); break;
+        case 165: nthrootkey(); keyslist.push(165); break;
+        case 61: equalskey(); keyslist.push(61); break;
 
-        // voor SVEN (hacky)
+// Specialkeys voor SVEN (hacky)
         case 189: pluskey(); break;
         case 186: timeskey(); break;
         case 220: powerkey(); break;
@@ -652,6 +672,18 @@ else
         case 221: dividekey(); break;
         case 192: nthrootkey(); break;
         case 187: equalskey(); break;
+
+// Cijfers (voor Wouter)
+        case 49: e.preventDefault(); substituteselected(selectit('1'), equation); updatelatex(equation); break; 
+        case 50: e.preventDefault(); substituteselected(selectit('2'), equation); updatelatex(equation); break;
+        case 51: e.preventDefault(); substituteselected(selectit('3'), equation); updatelatex(equation); break;
+        case 52: e.preventDefault(); substituteselected(selectit('4'), equation); updatelatex(equation); break;
+        case 53: e.preventDefault(); substituteselected(selectit('5'), equation); updatelatex(equation); break;
+        case 54: e.preventDefault(); substituteselected(selectit('6'), equation); updatelatex(equation); break;
+        case 55: e.preventDefault(); substituteselected(selectit('7'), equation); updatelatex(equation); break;
+        case 56: e.preventDefault(); substituteselected(selectit('8'), equation); updatelatex(equation); break;
+        case 57: e.preventDefault(); substituteselected(selectit('9'), equation); updatelatex(equation); break;
+        case 48: e.preventDefault(); substituteselected(selectit('0'), equation); updatelatex(equation); break;
     }
 };
 
