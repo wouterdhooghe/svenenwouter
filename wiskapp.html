@@ -102,7 +102,7 @@ var out = document.querySelector(".output");
 
 var customFunctions = {
     // deze werkt nu nog niet met een willekeurig aantal elementen!!!
-  plus: function () {
+  Plus: function () {
 //     arguments is een object met alle argumenten die zijn meegegeven met deze functie erin
 
 // de argumenten van de plus functie zijn een object, maar moeten eerst naar een array worden omgezet
@@ -110,6 +110,15 @@ var argumentarray = Object.values(arguments);
 // Tel steeds de eerste op met de som van de rest van de array (reduce) en bekom zo de totale som
 sum = argumentarray.reduce(function (a,b) {return a + b;});
 return sum;
+  },
+  Times: function () {
+//     arguments is een object met alle argumenten die zijn meegegeven met deze functie erin
+
+// de argumenten van de Times functie zijn een object, maar moeten eerst naar een array worden omgezet
+var argumentarray = Object.values(arguments);
+// Tel steeds de eerste op met de som van de rest van de array (reduce) en bekom zo de totale som
+product = argumentarray.reduce(function (a,b) {return a * b;});
+return product;
   },
   minus: function (a, b) {
     return a - b;
@@ -124,21 +133,41 @@ return sum;
 
 };
 
-customFunctions.plus.toTex = function (node, options) {
+customFunctions.Plus.toTex = function (node, options) {
     
+    console.log('plusinputnode: ');
+    console.log(node);
+    totalargs = node.args.length;
+    outputs = [];
+
+    for (i=0; i<totalargs; i++) {
+        outputs.push(node.args[i].toTex(options));
+        console.log(outputs);
+    };
+    console.log('plusoutputs');
+    console.log(outputs.join(' + '));
+    return outputs.join(' + ');
+};
+
+customFunctions.Times.toTex = function (node, options) {
+    
+    console.log('timesinputnode: ');
+    console.log(node);
+
     totalargs = node.args.length;
     outputs = [];
     for (i=0; i<totalargs; i++) {
         outputs.push(node.args[i].toTex(options));
     };
-    console.log(outputs.join);
-    return outputs.join('+');
+    console.log(outputs.join(' * '));
+    return outputs.join(' * ');
 };
 customFunctions.binom.toTex = '\\mathrm{${name}}\\left(${args}\\right)'; //template string
 customFunctions.minus.toTex = function (node, options) { return node.args[0].toTex(options) 
   + node.name + node.args[1].toTex(options);
 };
 customFunctions.Select.toTex = function (node, options) {
+    console.log('slct');
   return '\\textcolor{red}{' + node.args[0].toTex(options) + '}';
 };
 
@@ -406,7 +435,7 @@ console.log('cleaned');
 };
 
 function pluskey() {
-    expr.value = 'x^3/Select(cos(3x))^2'
+    expr.value = 'Plus(3, Times(3, Select(4), 5), 7)';
 }
 
 function timeskey() {
@@ -453,6 +482,9 @@ console.log(selectadress);
 // if (selectnode.args[1] == undefined) {console.log('only one argument'); return};
 // console.log('more than one argument');
 
+    // als Select al de root is: doe niks
+    if (eq.fn == 'Select') {return}; 
+
 // vind het nummer van dit argument
 if (selectadress[selectadress.length - 1] == 'content') {
     huidignummer = 0;
@@ -495,6 +527,9 @@ console.log(selectadress);
 // selectnode = readatadress(selectadress,eq);
 // if (selectnode.args[1] == undefined) {console.log('only one argument'); return};
 // console.log('more than one argument');
+
+    // als Select al de root is: doe niks
+    if (eq.fn == 'Select') {return}; 
 
 // vind het nummer van dit argument, en het aantal argumenten
 if (selectadress[selectadress.length - 1] == 'content') {
