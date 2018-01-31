@@ -643,10 +643,26 @@ else
 
         case 53: equation = math.parse(expr.value); updatelatex(equation);
         case 54: updatelatex(equation);
+
+        // voor SVEN (hacky)
+        case 189: pluskey(); break;
+        case 186: timeskey(); break;
+        case 220: powerkey(); break;
+        case 219: minuskey(); break;
+        case 221: dividekey(); break;
+        case 192: nthrootkey(); break;
+        case 187: equalskey(); break;
     }
 };
 
-
+// bij mij vs bij sven
+// 61  -> 187
+// 192 -> 220
+// 165 -> 192
+// 164 -> 186
+// 160 -> 221
+// 173 -> 189
+// 169 -> 219
 
 </script>
 
